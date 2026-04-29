@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Mineski Loyalty - Scan QR</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * { font-family: 'Inter', sans-serif; }
+        .gradient-bg {
+            background: linear-gradient(180deg, #0f0f1a 0%, #1a1a2e 100%);
+        }
+        .scanner-frame {
+            background: linear-gradient(90deg, transparent 0%, transparent 45%, #ef4444 45%, #ef4444 55%, transparent 55%, transparent 100%),
+                        linear-gradient(0deg, transparent 0%, transparent 45%, #ef4444 45%, #ef4444 55%, transparent 55%, transparent 100%);
+            background-size: 100% 2px, 2px 100%;
+            background-position: center;
+            background-repeat: no-repeat;
+        }
+        .scan-line {
+            animation: scan 2s linear infinite;
+        }
+        @keyframes scan {
+            0% { transform: translateY(-100px); opacity: 0; }
+            50% { opacity: 1; }
+            100% { transform: translateY(100px); opacity: 0; }
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .bottom-nav {
+            background: rgba(15, 15, 26, 0.95);
+            backdrop-filter: blur(20px);
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+    </style>
+</head>
+<body class="gradient-bg text-white h-screen flex flex-col">
+    <!-- Header -->
+    <div class="px-6 pt-12 pb-4 flex justify-between items-center z-10">
+        <button onclick="history.back()" class="p-2 -ml-2 hover:bg-white/10 rounded-full">
+            <i data-lucide="arrow-left" class="w-6 h-6"></i>
+        </button>
+        <h1 class="text-xl font-bold">Scan to Pay</h1>
+        <button class="p-2 hover:bg-white/10 rounded-full">
+            <i data-lucide="flashlight" class="w-6 h-6"></i>
+        </button>
+    </div>
+
+    <!-- Scanner Area -->
+    <div class="flex-1 flex flex-col items-center justify-center px-6">
+        <div class="relative w-72 h-72 mb-8">
+            <!-- Corner markers -->
+            <div class="absolute top-0 left-0 w-8 h-8 border-t-4 border-l-4 border-red-500 rounded-tl-lg"></div>
+            <div class="absolute top-0 right-0 w-8 h-8 border-t-4 border-r-4 border-red-500 rounded-tr-lg"></div>
+            <div class="absolute bottom-0 left-0 w-8 h-8 border-b-4 border-l-4 border-red-500 rounded-bl-lg"></div>
+            <div class="absolute bottom-0 right-0 w-8 h-8 border-b-4 border-r-4 border-red-500 rounded-br-lg"></div>
+            
+            <!-- Scanning area -->
+            <div class="absolute inset-4 border border-white/20 rounded-lg overflow-hidden scanner-frame">
+                <div class="absolute inset-0 bg-gradient-to-b from-transparent via-red-500/20 to-transparent h-full w-full scan-line"></div>
+            </div>
+            
+            <!-- Simulated QR target -->
+            <div id="qrTarget" class="absolute inset-0 flex items-center justify-center opacity-0 transition-opacity duration-300">
+                <div class="bg-white p-2 rounded-lg">
+                    <div class="w-32 h-32 bg-black rounded flex items-center justify-center">
+                        <i data-lucide="qr-code" class="w-24 h-24 text-white"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <p class="text-gray-400 text-center mb-8">Align QR code within the frame to scan</p>
+
+        <!-- Amount Input (shown after scan) -->
+        <div id="paymentPanel" class="w-full max-w-sm hidden animate-slide-up">
+            <div class="glass-card rounded-2xl p-6 mb-4">
+                <div class="flex items-center gap-3 mb-4">
+                    <div class="w-12 h-12 rounded-full bg-red-500/20 flex items-center justify-center">
+                        <i data-lucide="store" class="w-6 h-6 text-red-400"></i>
+                    </div>
+                    <div>
+                        <p class="font-semibold">Mineski Loyalty Cyber Cafe</p>
+                        <p class="text-xs text-gray-400">Merchant</p>
+                    </div>
+                </div>
+                
+                <div class="space-y-4">
+                    <div>
+                        <label class="text-xs text-gray-400 uppercase">Amount to Pay</label>
+                        <div class="flex items-baseline gap-2 mt-1">
+                            <span class="text-2xl font-bold">₱</span>
+                            <input type="number" id="payAmount" class="bg-transparent text-4xl font-bold outline-none w-full" placeholder="0" autofocus>
+                        </div>
+                    </div>
+                    
+                    <div class="flex justify-between items-center py-3 border-t border-white/10">
+                        <span class="text-gray-400">Use Points</span>
+                        <div class="flex items-center gap-2">
+                            <span class="text-sm" id="pointsToUse">0 PTS</span>
+                            <input type="checkbox" id="usePoints" class="w-5 h-5 rounded border-gray-600 bg-transparent checked:bg-red-600" onchange="togglePoints()">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <button onclick="processPayment()" class="w-full bg-gradient-to-r from-red-600 to-orange-600 py-4 rounded-xl font-bold text-lg shadow-lg shadow-red-600/30">
+                Pay Now
+            </button>
+        </div>
+
+        <!-- Simulate Scan Button (for demo) -->
+        <button onclick="simulateScan()" id="scanBtn" class="glass-card px-8 py-3 rounded-full font-medium hover:bg-white/10 transition-colors">
+            <i data-lucide="camera" class="w-5 h-5 inline mr-2"></i>
+            Simulate QR Detection
+        </button>
+    </div>
+
+    <!-- My QR Code Section -->
+    <div class="px-6 pb-24">
+        <div class="glass-card rounded-2xl p-4 flex items-center gap-4">
+            <div class="w-16 h-16 bg-white rounded-lg p-2 flex items-center justify-center">
+                <i data-lucide="qr-code" class="w-12 h-12 text-black"></i>
+            </div>
+            <div class="flex-1">
+                <p class="font-semibold">My QR Code</p>
+                <p class="text-xs text-gray-400 mt-1">Receive points or payments</p>
+            </div>
+            <button class="p-2 hover:bg-white/10 rounded-full">
+                <i data-lucide="share-2" class="w-5 h-5"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- Bottom Navigation -->
+    <div class="fixed bottom-0 left-0 right-0 bottom-nav px-6 py-4 pb-8">
+        <div class="flex justify-around items-center">
+            <button onclick="location.href='dashboard.html'" class="flex flex-col items-center gap-1 text-gray-400 hover:text-white">
+                <i data-lucide="home" class="w-6 h-6"></i>
+                <span class="text-xs font-medium">Home</span>
+            </button>
+            <button onclick="location.href='rewards.html'" class="flex flex-col items-center gap-1 text-gray-400 hover:text-white">
+                <i data-lucide="gift" class="w-6 h-6"></i>
+                <span class="text-xs font-medium">Rewards</span>
+            </button>
+            <button class="flex flex-col items-center -mt-8">
+                <div class="w-14 h-14 bg-gradient-to-r from-red-600 to-orange-600 rounded-full flex items-center justify-center shadow-lg shadow-red-600/30 ring-4 ring-[#0f0f1a]">
+                    <i data-lucide="scan" class="w-7 h-7 text-white"></i>
+                </div>
+                <span class="text-xs font-medium mt-1 text-red-500">Scan</span>
+            </button>
+            <button onclick="location.href='earn.html'" class="flex flex-col items-center gap-1 text-gray-400 hover:text-white">
+                <i data-lucide="zap" class="w-6 h-6"></i>
+                <span class="text-xs font-medium">Earn</span>
+            </button>
+            <button onclick="location.href='profile.html'" class="flex flex-col items-center gap-1 text-gray-400 hover:text-white">
+                <i data-lucide="user" class="w-6 h-6"></i>
+                <span class="text-xs font-medium">Profile</span>
+            </button>
+        </div>
+    </div>
+
+    <script>
+        lucide.createIcons();
+        
+        if (!localStorage.getItem('userLoggedIn')) {
+            window.location.href = 'index.html';
+        }
+
+        let scanned = false;
+
+        function simulateScan() {
+            if (scanned) return;
+            
+            // Hide button, show target
+            document.getElementById('scanBtn').classList.add('hidden');
+            document.getElementById('qrTarget').classList.remove('opacity-0');
+            
+            setTimeout(() => {
+                document.getElementById('qrTarget').classList.add('opacity-0');
+                document.getElementById('paymentPanel').classList.remove('hidden');
+                scanned = true;
+            }, 1500);
+        }
+
+        function togglePoints() {
+            const checkbox = document.getElementById('usePoints');
+            const amount = parseFloat(document.getElementById('payAmount').value) || 0;
+            const pointsNeeded = Math.ceil(amount * 10); // 1 peso = 10 points
+            
+            if (checkbox.checked) {
+                document.getElementById('pointsToUse').textContent = pointsNeeded + ' PTS';
+            } else {
+                document.getElementById('pointsToUse').textContent = '0 PTS';
+            }
+        }
+
+        document.getElementById('payAmount').addEventListener('input', togglePoints);
+
+        function processPayment() {
+            const amount = parseFloat(document.getElementById('payAmount').value);
+            if (!amount || amount <= 0) {
+                alert('Please enter a valid amount');
+                return;
+            }
+
+            const usePoints = document.getElementById('usePoints').checked;
+            let pointsUsed = 0;
+            
+            if (usePoints) {
+                pointsUsed = Math.ceil(amount * 10);
+                let current = parseInt(localStorage.getItem('userPoints') || '0');
+                if (current < pointsUsed) {
+                    alert('Insufficient points!');
+                    return;
+                }
+                current -= pointsUsed;
+                localStorage.setItem('userPoints', current);
+            }
+
+            // Add transaction
+            const transactions = JSON.parse(localStorage.getItem('transactions') || '[]');
+            transactions.unshift({
+                type: 'spent',
+                points: usePoints ? pointsUsed : 0,
+                description: `Payment to Mineski Cyber Cafe ${usePoints ? '(Points)' : '(Cash)'}`,
+                amount: amount,
+                date: new Date().toISOString()
+            });
+            localStorage.setItem('transactions', JSON.stringify(transactions));
+
+            alert(`✅ Payment of ₱${amount} ${usePoints ? `using ${pointsUsed} points` : ''} successful!`);
+            location.href = 'dashboard.html';
+        }
