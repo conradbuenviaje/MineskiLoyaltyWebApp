@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Mineski Loyalty - Login</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * { font-family: 'Inter', sans-serif; }
+        .gradient-bg {
+            background: linear-gradient(135deg, #0f0f1a 0%, #1a1a2e 50%, #16213e 100%);
+        }
+        .glow-text {
+            text-shadow: 0 0 20px rgba(239, 68, 68, 0.5);
+        }
+        .gaming-gradient {
+            background: linear-gradient(90deg, #ff0040 0%, #ff4d00 100%);
+        }
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .animate-pulse-slow {
+            animation: pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+        .animate-float {
+            animation: float 6s ease-in-out infinite;
+        }
+    </style>
+</head>
+<body class="gradient-bg text-white h-screen overflow-hidden relative">
+    <!-- Background Elements -->
+    <div class="absolute inset-0 overflow-hidden">
+        <div class="absolute top-20 left-10 w-72 h-72 bg-red-600 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-pulse-slow"></div>
+        <div class="absolute bottom-20 right-10 w-72 h-72 bg-blue-600 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-pulse-slow" style="animation-delay: 1s;"></div>
+        <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-purple-600 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-pulse-slow" style="animation-delay: 2s;"></div>
+    </div>
+
+    <!-- Content -->
+    <div class="relative z-10 h-full flex flex-col justify-between p-6">
+        <!-- Header -->
+        <div class="pt-8 text-center animate-float">
+            <div class="w-24 h-24 mx-auto mb-4 relative">
+                <div class="absolute inset-0 bg-gradient-to-br from-red-500 to-orange-500 rounded-2xl transform rotate-6 opacity-50"></div>
+                <div class="absolute inset-0 bg-gradient-to-br from-red-500 to-orange-500 rounded-2xl flex items-center justify-center">
+                    <i data-lucide="gamepad-2" class="w-12 h-12 text-white"></i>
+                </div>
+            </div>
+            <h1 class="text-3xl font-bold tracking-tight glow-text">MINESKI <span class="text-red-500">INFINITY</span></h1>
+            <p class="text-gray-400 text-sm mt-2">Gamify Your World. Earn. Play. Redeem.</p>
+        </div>
+
+        <!-- Login Form -->
+        <div class="glass-effect rounded-3xl p-6 space-y-4 mb-8">
+            <div class="space-y-2">
+                <label class="text-xs font-medium text-gray-400 uppercase tracking-wider">Mobile Number</label>
+                <div class="relative">
+                    <span class="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 font-semibold">+63</span>
+                    <input type="tel" id="phoneInput" placeholder="912 345 6789" 
+                           class="w-full bg-black/30 border border-gray-700 rounded-xl py-4 pl-14 pr-4 text-white placeholder-gray-600 focus:outline-none focus:border-red-500 transition-colors"
+                           maxlength="10">
+                </div>
+            </div>
+            
+            <div class="space-y-2">
+                <label class="text-xs font-medium text-gray-400 uppercase tracking-wider">MPIN</label>
+                <div class="flex justify-between gap-2">
+                    <input type="password" maxlength="1" class="w-12 h-12 bg-black/30 border border-gray-700 rounded-xl text-center text-xl font-bold focus:outline-none focus:border-red-500 transition-colors mpin-input">
+                    <input type="password" maxlength="1" class="w-12 h-12 bg-black/30 border border-gray-700 rounded-xl text-center text-xl font-bold focus:outline-none focus:border-red-500 transition-colors mpin-input">
+                    <input type="password" maxlength="1" class="w-12 h-12 bg-black/30 border border-gray-700 rounded-xl text-center text-xl font-bold focus:outline-none focus:border-red-500 transition-colors mpin-input">
+                    <input type="password" maxlength="1" class="w-12 h-12 bg-black/30 border border-gray-700 rounded-xl text-center text-xl font-bold focus:outline-none focus:border-red-500 transition-colors mpin-input">
+                </div>
+            </div>
+
+            <button onclick="login()" class="w-full gaming-gradient py-4 rounded-xl font-bold text-lg shadow-lg shadow-red-500/30 active:scale-95 transition-transform flex items-center justify-center gap-2">
+                <span>ENTER ARENA</span>
+                <i data-lucide="arrow-right" class="w-5 h-5"></i>
+            </button>
+
+            <div class="flex justify-between text-sm pt-2">
+                <button class="text-gray-400 hover:text-white transition-colors">Forgot MPIN?</button>
+                <button class="text-red-400 hover:text-red-300 transition-colors font-medium">Create Account</button>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="text-center pb-4">
+            <p class="text-xs text-gray-500">Secured by Mineski Global Esports Technology</p>
+            <div class="flex justify-center gap-4 mt-3 text-gray-400">
+                <i data-lucide="shield-check" class="w-5 h-5"></i>
+                <i data-lucide="lock" class="w-5 h-5"></i>
+                <i data-lucide="smartphone" class="w-5 h-5"></i>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        lucide.createIcons();
+        
+        // Auto-focus MPIN inputs
+        const mpinInputs = document.querySelectorAll('.mpin-input');
+        mpinInputs.forEach((input, index) => {
+            input.addEventListener('input', (e) => {
+                if (e.target.value && index < mpinInputs.length - 1) {
+                    mpinInputs[index + 1].focus();
+                }
+            });
+            input.addEventListener('keydown', (e) => {
+                if (e.key === 'Backspace' && !e.target.value && index > 0) {
+                    mpinInputs[index - 1].focus();
+                }
+            });
+        });
+
+        function login() {
+            const phone = document.getElementById('phoneInput').value;
+            if (phone.length < 10) {
+                alert('Please enter a valid mobile number');
+                return;
+            }
+            
+            // Simulate loading
+            const btn = document.querySelector('button[onclick="login()"]');
+            btn.innerHTML = '<div class="w-6 h-6 border-2 border-white border-t-transparent rounded-full animate-spin"></div>';
+            btn.disabled = true;
+            
+            setTimeout(() => {
+                localStorage.setItem('userLoggedIn', 'true');
+                localStorage.setItem('userPhone', '+63' + phone);
+                localStorage.setItem('userPoints', '2500');
+                window.location.href = 'dashboard.html';
+            }, 1500);
+        }
+
+        // Check if already logged in
+        if (localStorage.getItem('userLoggedIn')) {
+            window.location.href = 'dashboard.html';
+        }
+    </script>
+<script src="https://deepsite.hf.co/deepsite-badge.js"></script>
+</body>
+</html>
